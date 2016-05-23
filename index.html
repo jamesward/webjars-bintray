@@ -1,0 +1,182 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>How Bintray Saved my Marriage: Scaling WebJars with Bintray</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/black.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+
+		<div class="reveal">
+			<div class="slides">
+				<section>
+                    <h2>How Bintray Saved my Marriage: Scaling WebJars with Bintray</h2>
+
+                    <p>
+                        <small><a href="http://jamesward.com">James Ward</a> / <a href="http://twitter.com/_JamesWard">@_JamesWard</a></small>
+                    </p>
+                </section>
+
+				<section>
+                    <h2>WebJars</h2>
+
+                    <blockquote>Web libraries in cute little JARs, deployed on Maven Central</blockquote>
+
+                    <br/>
+
+                    <a href="http://webjars.org/classic">All Classic WebJars</a>
+
+                    <p>How they got there: <a href="https://github.com/webjars/webjars-template-zip/blob/master/pom.xml">pom.xml</a></p>
+
+                    <em>Over 8 Million downloads!</em>
+                </section>
+
+				<section>
+                    <h2>Burden of Success</h2>
+                    
+                    <ul>
+                        <li class="fragment">1000 Classic WebJars</li>
+                        <li class="fragment">~15 minutes for each WebJar</li>
+                        <li class="fragment">= 250 Hours!</li>
+                        <li class="fragment">3600 Classic WebJar Versions</li>
+                        <li class="fragment">~5 minutes for each additional version</li>
+                        <li class="fragment">= 216 Hours!</li>
+                        <li class="fragment">= Way too many nights &amp; weekends</li>
+                        <li class="fragment">NPM has 278k packages with almost 500/day new</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>Automation was the only way</h2>
+
+                    <img src="https://imgs.xkcd.com/comics/automation.png" style="vertical-align: middle">
+
+                    <ul>
+                        <li class="fragment">jCenter &amp; Maven Central</li>
+                        <li class="fragment">Need Metadata</li>
+                        <li class="fragment">Sync All?</li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>BinTray + WebJars</h2>
+
+                    <ul>
+                        <li class="fragment">NPM &amp; Bower WebJars deployed by end users</li>
+                        <li class="fragment"><a href="http://webjars.org/npm">Demo!</a></li>
+                    </ul>
+                    <table class="fragment">
+                        <tbody>
+                            <tr>
+                                <td></td>
+                                <td>Artifacts</td>
+                                <td>Versions</td>
+                            </tr>
+                            <tr>
+                                <td>Bower</td>
+                                <td>1940</td>
+                                <td>4615</td>
+                            </tr>
+                            <tr>
+                                <td>NPM</td>
+                                <td>2230</td>
+                                <td>4157</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+				<section>
+                    <h2>WebJars.org Artifact Deployment Architecture</h2>
+
+                    <ul>
+                        <li class="fragment">Fetch metadata</li>
+                        <li class="fragment">Transform metadata</li>
+                        <li class="fragment">Create artifact</li>
+                        <li class="fragment">Deploy to BinTray</li>
+                        <li class="fragment">Sync to Maven Central</li>
+                    </ul>
+                </section>
+
+				<section data-markdown>
+                    ## BinTray API Overview ([Docs](https://bintray.com/docs/api/))
+
+                    Create a Repo:
+                    ```
+POST https://bintray.com/api/v1/repos/:subject/:repo
+
+{
+  "type": "maven",
+  "private": false,
+  "desc": "This repo...",
+  "labels":["label1", "label2"]
+}
+                    ```
+                </section>
+
+				<section>
+                    <h2>Scala Wrapper</h2>
+
+                    <ul>
+                        <li>Play WS</li>
+                        <li>Play JSON</li>
+                        <li><a href="https://github.com/webjars/webjars/blob/master/app/utils/BinTray.scala">BinTray.scala</a></li>
+                        <li><a href="https://github.com/webjars/webjars/blob/master/test/utils/BinTraySpec.scala">BinTraySpec.scala</a></li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>Putting it all together</h2>
+
+                    <ul>
+                        <li>Create WebJar from Metadata</li>
+                        <li>createPackage, createVersion, publishPom, publishJar, publishSourceJar, publishJavadocJar, publishJavadocJar, signVersion, publishVersion, binTrayPublish, syncToMavenCentral</li>
+                        <li><a href="https://github.com/webjars/webjars/blob/master/app/utils/NPMWebJar.scala">NPMWebJar.scala</a></li>
+                        <li><code>heroku run pubnpm PACKAGE VERSION</code></li>
+                    </ul>
+                </section>
+
+				<section>
+                    <h2>Thank You!</h2>
+
+                    <br/>
+                    <h1>Questions?</h1>
+                </section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
